@@ -14,6 +14,8 @@ from graphs import bfs, dfs, dijkstra, topological_sort, DisjointSet
 from dynamic_programming import fib_memo, fib_tab, lcs, knapsack, coin_change, lis
 from strings_algo import is_palindrome, is_anagram, kmp_search, run_length_encode
 from math_extra import gcd, lcm, power, sieve
+from backtracking import tower_of_hanoi, n_queens, permutations, subsets
+from data_structures import Stack, MinStack, Queue, LinkedList, BinarySearchTree
 
 ALL_SORTS = [bubble_sort, quick_sort, merge_sort, insertion_sort, selection_sort, heap_sort]
 
@@ -173,6 +175,118 @@ class TestMath(unittest.TestCase):
         self.assertEqual(sieve(2), [2])
         self.assertEqual(sieve(1), [])
         self.assertEqual(len(sieve(100)), 25)
+
+
+class TestBacktracking(unittest.TestCase):
+    def test_tower_of_hanoi(self):
+        self.assertEqual(tower_of_hanoi(1), ["A->C"])
+        self.assertEqual(len(tower_of_hanoi(3)), 7)
+        self.assertEqual(len(tower_of_hanoi(10)), 2 ** 10 - 1)
+        # mọi bước đều là 'X->Y'
+        for move in tower_of_hanoi(5):
+            src, dst = move.split("->")
+            self.assertIn(src, "ABC")
+            self.assertIn(dst, "ABC")
+            self.assertNotEqual(src, dst)
+
+    def test_n_queens_solutions_exist(self):
+        self.assertEqual(n_queens(1), [0])
+        self.assertIsNotNone(n_queens(4))
+        self.assertIsNotNone(n_queens(8))
+        self.assertIsNone(n_queens(2))
+        self.assertIsNone(n_queens(3))
+
+    def test_n_queens_solution_is_valid(self):
+        for n in (4, 5, 6, 8):
+            placement = n_queens(n)
+            self.assertIsNotNone(placement, msg=n)
+            self.assertEqual(len(placement), n)
+            self.assertEqual(len(set(placement)), n)              # khác cột
+            self.assertEqual(len({r - c for r, c in enumerate(placement)}), n)  # khác chéo ↘
+            self.assertEqual(len({r + c for r, c in enumerate(placement)}), n)  # khác chéo ↗
+
+    def test_permutations(self):
+        result = permutations([1, 2, 3])
+        self.assertEqual(len(result), 6)
+        self.assertEqual(
+            sorted(tuple(p) for p in result),
+            [(1, 2, 3), (1, 3, 2), (2, 1, 3), (2, 3, 1), (3, 1, 2), (3, 2, 1)],
+        )
+        self.assertEqual(permutations([]), [[]])
+
+    def test_subsets(self):
+        result = subsets([1, 2, 3])
+        self.assertEqual(len(result), 8)
+        self.assertIn([], result)
+        self.assertIn([1, 2, 3], result)
+        self.assertIn([2], result)
+        self.assertEqual(subsets([]), [[]])
+
+
+class TestDataStructures(unittest.TestCase):
+    def test_stack(self):
+        s = Stack()
+        self.assertTrue(s.is_empty())
+        s.push(1); s.push(2); s.push(3)
+        self.assertEqual(len(s), 3)
+        self.assertEqual(s.pop(), 3)      # LIFO
+        self.assertEqual(s.peek(), 2)
+        self.assertEqual(len(s), 2)
+        self.assertFalse(s.is_empty())
+        s.pop(); s.pop()
+        with self.assertRaises(IndexError):
+            s.pop()
+
+    def test_min_stack(self):
+        ms = MinStack()
+        for x in (5, 3, 7, 3, 8):
+            ms.push(x)
+        self.assertEqual(ms.min(), 3)
+        ms.pop()  # bỏ 8
+        ms.pop()  # bỏ 3
+        self.assertEqual(ms.min(), 3)
+        ms.pop()  # bỏ 3
+        self.assertEqual(ms.min(), 3)
+        ms.pop()  # bỏ 7? không — còn 5,3 → bỏ 3
+        self.assertEqual(ms.min(), 5)
+
+    def test_queue(self):
+        q = Queue()
+        self.assertTrue(q.is_empty())
+        q.enqueue("a"); q.enqueue("b"); q.enqueue("c")
+        self.assertEqual(len(q), 3)
+        self.assertEqual(q.dequeue(), "a")  # FIFO
+        self.assertEqual(q.peek(), "b")
+        q.dequeue(); q.dequeue()
+        self.assertTrue(q.is_empty())
+        with self.assertRaises(IndexError):
+            q.dequeue()
+
+    def test_linked_list(self):
+        ll = LinkedList()
+        self.assertEqual(len(ll), 0)
+        for x in (1, 2, 3):
+            ll.append(x)
+        ll.prepend(0)
+        self.assertEqual(list(ll), [0, 1, 2, 3])
+        self.assertEqual(len(ll), 4)
+        self.assertTrue(ll.contains(2))
+        self.assertFalse(ll.contains(99))
+        self.assertTrue(ll.remove(2))
+        self.assertFalse(ll.remove(99))
+        self.assertEqual(list(ll), [0, 1, 3])
+        self.assertEqual(len(ll), 3)
+
+    def test_bst(self):
+        bst = BinarySearchTree()
+        for key in (5, 3, 7, 1, 4, 6, 8):
+            bst.insert(key)
+        self.assertEqual(bst.in_order(), [1, 3, 4, 5, 6, 7, 8])
+        self.assertTrue(bst.contains(4))
+        self.assertFalse(bst.contains(9))
+        bst.insert(4)  # key trùng: không thêm
+        self.assertEqual(len(bst), 7)
+        self.assertEqual(bst.in_order(), [1, 3, 4, 5, 6, 7, 8])
 
 
 if __name__ == "__main__":
