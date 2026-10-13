@@ -12,6 +12,8 @@ Các thuật toán kinh điển bằng Python, kèm **bộ test tự động** (
 | `dynamic_programming.py` | Fibonacci (memo + tabulation), LCS, Knapsack 0/1, Đổi tiền, LIS |
 | `strings_algo.py` | Palindrome, Anagram, KMP, Run-length encoding |
 | `math_extra.py` | GCD/LCM (Euclid), Lũy thừa nhanh, Sàng Eratosthenes |
+| `backtracking.py` | Tháp Hà Nội, N-Queens, Hoán vị, Tập con |
+| `data_structures.py` | Stack, MinStack, Queue, Linked List, Binary Search Tree |
 | `test_all.py` | Bộ test `unittest` cho toàn bộ thuật toán trên |
 
 ## Chạy demo
